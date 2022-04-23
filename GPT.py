@@ -14,7 +14,7 @@ class GPT(nn.Module):
         # [7666 (vocab_size), 768 (d_model)]
         self.embed = nn.Embedding(num_embeddings=vocab_size, embedding_dim=d_model)
         
-        # [128 (max_len), 768 (d_model)]
+        # [150 (max_len), 768 (d_model)]
         self.pos_embed = nn.Parameter(torch.randn(max_len, d_model, device=config.device) / 10)
         
         # attention (tril) mask
@@ -38,19 +38,19 @@ class GPT(nn.Module):
         self.FINAL_ffn = nn.Linear(in_features = d_model, out_features = vocab_size)
         
     def forward(self, x):
-        # [32 (batch_size), 128 (max_len)]
+        # [8 (batch_size), 150 (max_len)]
         pad_mask_x = get_key_padding_mask(x)
 
-        # all shape: [32 (batch_size), 128 (max_len), 768 (d_model)]
+        # all shape: [8 (batch_size), 150 (max_len), 768 (d_model)]
         word_embedding = self.embed(x)
         
-        # shape: [32 (batch_size), 128 (max_len), 768 (d_model)]
+        # shape: [8 (batch_size), 150 (max_len), 768 (d_model)]
         embedded_x = word_embedding + self.pos_embed
         
-        # shape: [32 (batch_size), 128 (max_len), 768 (d_model)]
+        # shape: [8 (batch_size), 150 (max_len), 768 (d_model)]
         output = self.DecoderBlock(embedded_x, self.attention_mask, pad_mask_x)
         
-        output = self.FINAL_ffn(output) # [32 (batch_size), 128 (max_len), 7666 (vocab_size)]
+        output = self.FINAL_ffn(output) # [8 (batch_size), 150 (max_len), 7666 (vocab_size)]
         
         return output
         
@@ -75,12 +75,12 @@ class Decoder(nn.Module):
         
     def forward(self, x, attention_mask_x, pad_mask_x):
         # Convert to PyTorch input formats
-        # [32 (batch_size), 128 (max_len), 768 (d_model)] -> [128 (max_len), 32 (batch_size), 768 (d_model)]
+        # [8 (batch_size), 150 (max_len), 768 (d_model)] -> [150 (max_len), 8 (batch_size), 768 (d_model)]
         x = x.permute(1, 0, 2)
         
         out = self.Decoder(src=x, mask=attention_mask_x, src_key_padding_mask=pad_mask_x)
     
-        # [128 (max_len), 32 (batch_size), 768 (d_model)] -> [32 (batch_size), 128 (max_len), 768 (d_model)]
+        # [150 (max_len), 8 (batch_size), 768 (d_model)] -> [8 (batch_size), 150 (max_len), 768 (d_model)]
         out = out.permute(1, 0, 2)
         
         return out
