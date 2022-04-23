@@ -1,12 +1,8 @@
 """
-实现的是: 构建词典，实现方法吧句子转化成数字序列何其翻转
-"""
-
-"""
-<PAD> -> 0    表示填充
-<SOS> -> 1    表示开头
-<EOS> -> 2    表示结尾
-<UNK> -> 3    表示未知
+<PAD> -> 0    padding token
+<SOS> -> 1    start token
+<EOS> -> 2    end token
+<UNK> -> 3    unknown token
 """
 import json
 
@@ -34,7 +30,7 @@ class Word2Sequence:
         self.count = {}
 
     def fit(self, sentence):
-        """吧单个句子保存到dict当中
+        """save words in sentence to self.dict
         param: sentence: [word1, word2, word3...]
         """
         for word in sentence:
@@ -42,10 +38,10 @@ class Word2Sequence:
 
     def build_vocab(self, min=5, max=None, max_features=None):
         """
-        生成词典
-        param min:          最小出现的次数
-        param max:          最大的次数
-        param max_features: 一共保留多少的词语
+        Build Word Dictionary
+        param min:          least occurrance of word to be considered
+        param max:          max occurrance of word to be considered
+        param max_features: max vocab size for tokenizer
         returns:            
         """
         # 删除count中词频小于min的word
@@ -63,32 +59,32 @@ class Word2Sequence:
             if word not in self.special_tokens:
                 self.dict[word] = len(self.dict)
         
-        # 得到一个翻转的dict字典
+        # reversed self.dict
         self.reverse_dict = dict(zip(self.dict.values(), self.dict.keys()))
     
     def transform(self, sentence, max_len=None, pad_first=False):
         """
-        把句子转化成序列
+        convert setence to int sequence
         param sentence: [word1, word2...]
-        param max_len: int, 对句子精选填充或者裁剪
+        param max_len: int, do padding or truncation
         """
-        if max_len is not None: # do padding here 填充
+        if max_len is not None: # do padding here
             if pad_first == False:
                 if max_len > len(sentence):
                     sentence = sentence + [self.PAD_TAG] * (max_len-len(sentence))
                 if max_len < len(sentence):
-                    sentence = sentence[:max_len] #裁剪
+                    sentence = sentence[:max_len] #truncation
             else:
                 if max_len > len(sentence):
                     sentence = [self.PAD_TAG] * (max_len-len(sentence)) + sentence
                 if max_len < len(sentence):
-                    sentence = sentence[-max_len:] #裁剪
+                    sentence = sentence[-max_len:] #truncation
 
         return [self.dict.get(word, self.UNK) for word in sentence]
     
     def inverse_transform(self, indices, is_tensor=False):
         """
-        靶序列转化为句子
+        convert int sequences to words
         param indices: [1, 2, 3, 4, 5...]
         """
         if is_tensor == False:
@@ -101,51 +97,40 @@ class Word2Sequence:
     def __len__(self):
         return (len(self.dict))
 
-    def save_dict(self, path):
+    def save_dict(self, path, notify=False):
         # Save self.dict at location path
         with open(path, 'w') as file_object:  #open the file in write mode
             json.dump(self.dict, file_object)
-            
-        print("Successfully Saved label dict!")
+        
+        if notify == True:
+            print("Successfully Saved label dict!")
 
-    def load_dict(self, path):
+    def load_dict(self, path, notify=False):
         # Load the saved dictionary to self.dict
         
         file = open(path)
         self.dict = json.load(file)
         
         self.reverse_dict = dict(zip(self.dict.values(), self.dict.keys()))
-        print("Successfully Loaded label dict!")
+        
+        if notify == True:
+            print("Successfully Loaded label dict!")
 
 
 # if __name__ == '__main__':
 #     import config
-#     from data import get_preprocessed_data
-#     text = open(config.path).readlines()
-#     seqs, segs = get_preprocessed_data(text)
+#     from data import txt_to_wordlist
+#     word_list = txt_to_wordlist(config.path)
+    
 #     w2s = Word2Sequence()
-#     for sequence in seqs:
-#         w2s.fit(sequence)
-#     w2s.build_vocab(min=0, max_features=10000)
-#     ret = w2s.transform(seqs[0], max_len=128, pad_first=True)
+#     w2s.fit(word_list)
+#     w2s.build_vocab(min=0, max_features=None)
+#     w2s.save_dict(config.w2s_dict_path)
+#     print(f"This tokenizer has: {len(w2s)} vocabs")
+    
+#     sent = ["this", "text", "is", "for", "test"]
+#     ret = w2s.transform(sent, max_len=10, pad_first=False)
 #     rev_ret = w2s.inverse_transform(ret)
 #     print(ret)
 #     print(rev_ret)
 #     w2s.save_dict(config.w2s_dict_path)
-
-
-# if __name__ == '__main__':
-#     import config
-#     from data import get_preprocessed_data
-#     text = open(config.path).readlines()
-#     seqs, segs = get_preprocessed_data(text)
-#     custom_dict = {"<PAD>" : 0}
-#     w2s_seg = Word2Sequence(custom_dict=custom_dict)
-#     for segment in segs:
-#         w2s_seg.fit(segment)
-#     w2s_seg.build_vocab(min=0, max_features=12)
-#     ret = w2s_seg.transform(segs[0], max_len=128, pad_first=True)
-#     rev_ret = w2s_seg.inverse_transform(ret)
-#     print(ret)
-#     print(rev_ret)
-#     w2s_seg.save_dict(config.w2s_seg_dict_path)
