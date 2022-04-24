@@ -1,3 +1,8 @@
+"""
+    Description: Data Preprocessing
+    Author: Jimmy Lu
+    Date: March 2022
+"""
 from nltk.tokenize import WordPunctTokenizer
 from word_sequence import Word2Sequence
 import config

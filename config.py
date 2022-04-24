@@ -1,3 +1,8 @@
+"""
+    Description: Configuration File
+    Author: Jimmy Lu
+    Date: March 2022
+"""
 import torch
 from word_sequence import Word2Sequence
 

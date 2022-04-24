@@ -1,4 +1,8 @@
 """
+    Description: Python class for mini tokenizer
+    Author: Jimmy Lu
+    Date: March 2022
+
 <PAD> -> 0    padding token
 <SOS> -> 1    start token
 <EOS> -> 2    end token

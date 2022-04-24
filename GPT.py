@@ -1,3 +1,8 @@
+"""
+    Description: Model code + utilities
+    Author: Jimmy Lu
+    Date: March 2022
+"""
 from nltk.tokenize import WordPunctTokenizer
 import torch.nn as nn
 import config

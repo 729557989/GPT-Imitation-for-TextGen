@@ -1,3 +1,8 @@
+"""
+    Description: Sample Text Generations with Pretrained Model
+    Author: Jimmy Lu
+    Date: March 2022
+"""
 from GPT import GPT, generate, train
 import torch
 import config

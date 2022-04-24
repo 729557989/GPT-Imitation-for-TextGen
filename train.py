@@ -1,3 +1,8 @@
+"""
+    Description: Sample Training
+    Author: Jimmy Lu
+    Date: March 2022
+"""
 from data import dataloader
 import torch
 from GPT import GPT, generate, train
