@@ -25,6 +25,6 @@ if __name__ == "__main__":
     
     # NOTE: Run Text Generation by providing header
     header = "First Citizen:"
-    print(type(gpt))
-    generated = generate(gpt, config.tokenizer, header, k=1, temp=0.7)
+    # print(type(gpt))
+    generated = generate(gpt, config.tokenizer, header, k=3, temp=0.7)
     print(" ".join(config.tokenizer.inverse_transform(generated.cpu()[0], is_tensor=True)))

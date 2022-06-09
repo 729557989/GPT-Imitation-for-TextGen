@@ -138,6 +138,8 @@ def generate(model, tokenizer, x, k=1, temp=0.7): # pay attention to loc that's 
     Returns:
         target (torch.tensor): Then generated sequence tokens
     """
+    model.eval()
+    
     target = ['<SOS>'] + WordPunctTokenizer().tokenize(x.lower())
     pred_loc = len(target)
     target = tokenizer.transform(target, max_len=config.max_len, pad_first=False)

@@ -29,8 +29,8 @@ if __name__ == "__main__":
         num_layers = config.decoder_layers
     )
     gpt.to(config.device)
-    # NOTE: If Transfer Learning, make sure the HyperParameters match
-    gpt.load_state_dict(torch.load(config.GPT, map_location=config.device))
+    # # NOTE: If Transfer Learning, make sure the HyperParameters match
+    # gpt.load_state_dict(torch.load(config.GPT, map_location=config.device))
     
     
     # NOTE: TRAINING!!!
@@ -43,5 +43,5 @@ if __name__ == "__main__":
     
     # NOTE: Test model by generating!
     header = "First Citizen:"
-    generated = generate(gpt, config.tokenizer, header, k=1, temp=0.7)
+    generated = generate(gpt, config.tokenizer, header, k=3, temp=0.7)
     print(" ".join(config.tokenizer.inverse_transform(generated.cpu()[0], is_tensor=True)))

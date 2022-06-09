@@ -38,3 +38,5 @@ review:
 
 # Note: GPTs are strong by stacking HyperParameters and the number of Decoder Blocks,
 #       This meant that GPTs are very computationally expensive + picky, so most likely you use pretrained GPTs via HuggingFace
+
+# Sometimes re fit the tokenizer if some error with cuda was brought up
